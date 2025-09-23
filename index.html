@@ -105,17 +105,22 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
             transform-origin: center;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #f0e6e6;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
             text-align: center;
-            padding: 5px;
+            padding-left: 20px;
+        }
+        
+        .wheel-section span {
+            transform: rotate(90deg);
+            display: block;
+            white-space: nowrap;
         }
         
         .wheel-center {
@@ -303,6 +308,7 @@
             
             .wheel-section {
                 font-size: 0.9rem;
+                padding-left: 15px;
             }
         }
     </style>
@@ -417,7 +423,14 @@
                     sectionEl.className = 'wheel-section';
                     sectionEl.style.backgroundColor = section.color;
                     sectionEl.style.transform = `rotate(${index * angle}deg)`;
-                    sectionEl.innerHTML = `<span style="transform: rotate(${angle/2}deg); display: block;">${section.text}</span>`;
+                    sectionEl.innerHTML = `<span>${section.text}</span>`;
+                    
+                    // Create the triangular clip path for each section
+                    const clipAngle = angle;
+                    const clipPath = `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((clipAngle * Math.PI) / 360)}% 0%)`;
+                    sectionEl.style.clipPath = clipPath;
+                    sectionEl.style.WebkitClipPath = clipPath;
+                    
                     wheel.appendChild(sectionEl);
                 });
             }
