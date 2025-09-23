@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Triple Wheel Spinner</title>
+    <title>Natali's Unfortunate Wheel</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cinzel', 'Georgia', serif;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: radial-gradient(circle, #1a0a0a, #0d0404);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            color: white;
+            color: #e0d3d3;
+            text-align: center;
         }
         
         .container {
@@ -29,26 +30,49 @@
             text-align: center;
         }
         
+        .header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
         h1 {
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 3px 3px 6px #000;
+            color: #c93030;
+            letter-spacing: 3px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #c93030, transparent);
         }
         
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 10px;
-            opacity: 0.9;
+            color: #b8a6a6;
+            font-style: italic;
         }
         
         .spin-counter {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 10px 20px;
+            background: rgba(20, 5, 5, 0.7);
+            padding: 12px 25px;
             border-radius: 50px;
             display: inline-block;
             backdrop-filter: blur(5px);
+            border: 1px solid #5c2525;
+            color: #d4a9a9;
+            box-shadow: 0 0 15px rgba(201, 48, 48, 0.3);
         }
         
         .wheels-container {
@@ -67,21 +91,27 @@
         }
         
         .wheel-label {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             margin-bottom: 15px;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 3px #000;
+            color: #d4a9a9;
+            background: rgba(40, 10, 10, 0.7);
+            padding: 8px 15px;
+            border-radius: 8px;
+            width: 100%;
         }
         
         .wheel {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-            border: 8px solid #fff;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(0, 0, 0, 0.9);
+            border: 10px solid #2a0f0f;
             transition: transform 0.3s ease;
+            background: #1a0808;
         }
         
         .wheel-section {
@@ -94,35 +124,37 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            font-size: 1.3rem;
+            color: #f0e6e6;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
         }
         
         .wheel-center {
             position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #333;
+            width: 40px;
+            height: 40px;
+            background: #1a0808;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            border: 3px solid #5c2525;
         }
         
         .pointer {
             position: absolute;
-            top: -15px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid #ff3333;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 30px solid #c93030;
             z-index: 5;
+            filter: drop-shadow(0 0 5px #000);
         }
         
         .controls {
@@ -130,23 +162,41 @@
         }
         
         button {
-            background: #ff5722;
-            color: white;
+            background: linear-gradient(to bottom, #c93030, #8a1f1f);
+            color: #f0e6e6;
             border: none;
-            padding: 14px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
+            padding: 16px 35px;
+            font-size: 1.4rem;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(201, 48, 48, 0.4);
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 2px #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
         }
         
         button:hover {
-            background: #ff7043;
+            background: linear-gradient(to bottom, #d43c3c, #9a2525);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(201, 48, 48, 0.5);
         }
         
         button:active {
@@ -154,36 +204,42 @@
         }
         
         button:disabled {
-            background: #777;
+            background: linear-gradient(to bottom, #5c5c5c, #3a3a3a);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            color: #a0a0a0;
         }
         
         .result-container {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(20, 5, 5, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 25px;
+            padding: 30px;
             margin-top: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.3);
             display: none;
             animation: fadeIn 0.8s ease;
+            border: 1px solid #5c2525;
         }
         
         .result-title {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 15px;
-            color: #ffeb3b;
+            color: #c93030;
+            text-shadow: 1px 1px 3px #000;
         }
         
         .result-text {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
+            background: rgba(40, 10, 10, 0.7);
+            padding: 20px;
             border-radius: 10px;
-            margin: 10px 0;
+            margin: 15px 0;
+            color: #e8c4c4;
+            text-shadow: 1px 1px 3px #000;
+            border: 1px solid #5c2525;
         }
         
         .arrow {
@@ -191,9 +247,10 @@
             top: 50%;
             right: -30px;
             transform: translateY(-50%);
-            font-size: 40px;
-            color: white;
-            opacity: 0.7;
+            font-size: 50px;
+            color: #c93030;
+            opacity: 0.8;
+            text-shadow: 2px 2px 4px #000;
         }
         
         @keyframes fadeIn {
@@ -210,6 +267,20 @@
             animation: spin 0.1s linear infinite;
         }
         
+        .decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 20% 30%, #c93030 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, #c93030 0%, transparent 50%);
+        }
+        
         @media (max-width: 768px) {
             .wheels-container {
                 flex-direction: column;
@@ -217,24 +288,33 @@
             }
             
             .wheel-wrapper {
-                margin: 20px 0;
+                margin: 25px 0;
             }
             
             .arrow {
                 display: none;
             }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="decoration"></div>
     <div class="container">
-        <h1>Triple Wheel Spinner</h1>
-        <p class="subtitle">Spin the first wheel and watch the chain reaction!</p>
+        <div class="header">
+            <h1>Natali's Unfortunate Wheel</h1>
+            <p class="subtitle">Spin your fate and embrace the consequences...</p>
+        </div>
+        
         <div class="spin-counter">Total Spins: <span id="spinCount">0</span></div>
         
         <div class="wheels-container">
             <div class="wheel-wrapper">
-                <div class="wheel-label">Wheel 1: Category</div>
+                <div class="wheel-label">Fate's Domain</div>
                 <div class="wheel" id="wheel1">
                     <div class="pointer"></div>
                     <div class="wheel-center"></div>
@@ -242,10 +322,10 @@
                 </div>
             </div>
             
-            <div class="arrow">➡</div>
+            <div class="arrow">⮞</div>
             
             <div class="wheel-wrapper">
-                <div class="wheel-label">Wheel 2: Type</div>
+                <div class="wheel-label">Twist of Fortune</div>
                 <div class="wheel" id="wheel2">
                     <div class="pointer"></div>
                     <div class="wheel-center"></div>
@@ -253,10 +333,10 @@
                 </div>
             </div>
             
-            <div class="arrow">➡</div>
+            <div class="arrow">⮞</div>
             
             <div class="wheel-wrapper">
-                <div class="wheel-label">Wheel 3: Action</div>
+                <div class="wheel-label">Final Outcome</div>
                 <div class="wheel" id="wheel3">
                     <div class="pointer"></div>
                     <div class="wheel-center"></div>
@@ -266,13 +346,13 @@
         </div>
         
         <div class="controls">
-            <button id="spinButton">Spin First Wheel</button>
+            <button id="spinButton">Spin the Wheel of Fate</button>
         </div>
         
         <div class="result-container" id="resultContainer">
-            <div class="result-title">Your Result:</div>
+            <div class="result-title">Your Unfortunate Destiny:</div>
             <div class="result-text" id="resultText"></div>
-            <p>Spin again to get a different combination!</p>
+            <p>Dare to spin again?</p>
         </div>
     </div>
 
@@ -281,36 +361,36 @@
         let spinCount = localStorage.getItem('wheelSpinCount') || 0;
         document.getElementById('spinCount').textContent = spinCount;
 
-        // Wheel data
+        // Wheel data with darker, more dominant colors
         const wheelData = {
             wheel1: {
                 sections: [
-                    { text: "Food", color: "#FF6384", result: "Food" },
-                    { text: "Travel", color: "#36A2EB", result: "Travel" },
-                    { text: "Music", color: "#FFCE56", result: "Music" },
-                    { text: "Sports", color: "#4BC0C0", result: "Sports" },
-                    { text: "Movies", color: "#9966FF", result: "Movies" },
-                    { text: "Books", color: "#FF9F40", result: "Books" }
+                    { text: "Shadow", color: "#2a0f0f", result: "Shadow" },
+                    { text: "Blood", color: "#5c2525", result: "Blood" },
+                    { text: "Night", color: "#1a0808", result: "Night" },
+                    { text: "Ash", color: "#3a1818", result: "Ash" },
+                    { text: "Bone", color: "#4a1c1c", result: "Bone" },
+                    { text: "Void", color: "#0d0404", result: "Void" }
                 ]
             },
             wheel2: {
                 sections: [
-                    { text: "Italian", color: "#FF6384", result: "Italian" },
-                    { text: "Adventure", color: "#36A2EB", result: "Adventure" },
-                    { text: "Rock", color: "#FFCE56", result: "Rock" },
-                    { text: "Soccer", color: "#4BC0C0", result: "Soccer" },
-                    { text: "Comedy", color: "#9966FF", result: "Comedy" },
-                    { text: "Fantasy", color: "#FF9F40", result: "Fantasy" }
+                    { text: "Embrace", color: "#5c2525", result: "Embrace" },
+                    { text: "Descent", color: "#3a1818", result: "Descent" },
+                    { text: "Whisper", color: "#4a1c1c", result: "Whisper" },
+                    { text: "Grasp", color: "#2a0f0f", result: "Grasp" },
+                    { text: "Echo", color: "#1a0808", result: "Echo" },
+                    { text: "Silence", color: "#0d0404", result: "Silence" }
                 ]
             },
             wheel3: {
                 sections: [
-                    { text: "Cook", color: "#FF6384", result: "Cook" },
-                    { text: "Explore", color: "#36A2EB", result: "Explore" },
-                    { text: "Listen", color: "#FFCE56", result: "Listen" },
-                    { text: "Play", color: "#4BC0C0", result: "Play" },
-                    { text: "Watch", color: "#9966FF", result: "Watch" },
-                    { text: "Read", color: "#FF9F40", result: "Read" }
+                    { text: "Sorrow", color: "#3a1818", result: "Sorrow" },
+                    { text: "Ruin", color: "#4a1c1c", result: "Ruin" },
+                    { text: "Loss", color: "#2a0f0f", result: "Loss" },
+                    { text: "Regret", color: "#5c2525", result: "Regret" },
+                    { text: "Fate", color: "#1a0808", result: "Fate" },
+                    { text: "Doom", color: "#0d0404", result: "Doom" }
                 ]
             }
         };
@@ -403,7 +483,7 @@
                         
                         // Re-enable spin button
                         spinButton.disabled = false;
-                        spinButton.textContent = 'Spin First Wheel';
+                        spinButton.textContent = 'Spin the Wheel of Fate';
                     });
                 });
             });
