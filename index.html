@@ -51,16 +51,19 @@
             justify-content: center;
             margin-bottom: 40px;
             position: relative;
-            height: 300px;
+            height: 360px;
             align-items: flex-start;
         }
 
-        .wheel-wrapper { position: absolute; transition: all 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .wheel-wrapper {
+            position: absolute;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
         .wheel-wrapper.small { width: 150px; height: 150px; opacity: 0.8; }
         .wheel-wrapper.active {
-            width: 400px;
-            height: 400px;
+            width: 420px;
+            height: 420px;
             z-index: 100;
             opacity: 1;
             left: 50%;
@@ -68,8 +71,8 @@
             transform: translate(-50%, -50%);
         }
 
-        .wheel-wrapper.left { left: 25%; top: 20%; }
-        .wheel-wrapper.right { right: 25%; top: 20%; }
+        .wheel-wrapper.left { left: 18%; top: 18%; }
+        .wheel-wrapper.right { right: 18%; top: 18%; }
 
         .wheel-label {
             font-size: 1.2rem;
@@ -100,34 +103,48 @@
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(0, 0, 0, 0.9);
         }
 
-        /* Each slice (top-right quadrant) is rotated in JS */
+        /*
+         * Each slice is built by JS and rotated into place.
+         * The span inside is positioned toward the outer rim and uses vertical writing-mode
+         * so text reads from the rim → center.
+         */
         .wheel-section {
             position: absolute;
             width: 50%;
             height: 50%;
-            top: 0;
-            right: 0;
-            transform-origin: 0% 100%;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 0%;
             overflow: visible;
         }
 
-        /* Span is absolutely positioned, we'll counter-rotate it in JS so text is upright */
         .wheel-section span {
             position: absolute;
-            right: -10px;         /* nudges text toward the outer rim */
+            /* center vertical, we'll push outward via translate in JS */
             top: 50%;
+            left: 50%;
             transform-origin: center;
-            transform: translateY(-50%);
-            display: block;
-            width: 130px;
-            text-align: center;
-            font-size: 0.8rem;
-            line-height: 1.2;
+            writing-mode: vertical-rl;       /* outer rim -> inner rim flow */
+            text-orientation: mixed;
+            font-size: 0.85rem;
+            line-height: 1.05;
             color: #f0e6e6;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
             pointer-events: none;
+            white-space: nowrap;
+            letter-spacing: 1px;
         }
-        .wheel-wrapper.active .wheel-section span { font-size: 1.1rem; width: 170px; right: -18px; }
+
+        .wheel-wrapper.active .wheel-section span {
+            font-size: 1.15rem;
+        }
+
+        /* highlight the winner slice after landing */
+        .wheel-section.winner span {
+            filter: drop-shadow(0 0 10px rgba(255,240,240,0.9));
+            font-weight: 800;
+            transform-origin: center;
+        }
 
         .wheel-center {
             position: absolute;
@@ -145,26 +162,22 @@
         }
         .wheel-wrapper.active .wheel-center { width: 40px; height: 40px; border-width: 4px; }
 
+        /* pointer at top - clearer landing */
         .pointer {
             position: absolute;
-            top: -10px;
+            top: -24px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 15px solid #c93030;
-            z-index: 5;
-            filter: drop-shadow(0 0 3px #000);
-            transition: all 0.5s ease;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 22px solid #ff4b4b;
+            z-index: 55;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+            transition: transform 180ms ease;
         }
-        .wheel-wrapper.active .pointer {
-            top: -20px;
-            border-left-width: 18px;
-            border-right-width: 18px;
-            border-top-width: 25px;
-        }
+        .pointer.bounce { transform: translateX(-50%) translateY(6px); transition: transform 120ms ease; }
 
         .controls { margin: 30px 0; position: relative; z-index: 10; }
 
@@ -173,7 +186,7 @@
             color: #f0e6e6;
             border: none;
             padding: 16px 35px;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -185,6 +198,7 @@
             overflow: hidden;
             margin-bottom: 15px;
         }
+
         button::before {
             content: "";
             position: absolute;
@@ -192,68 +206,57 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
             transition: 0.5s;
         }
         button:hover::before { left: 100%; }
-        button:hover { background: linear-gradient(to bottom, #d43c3c, #9a2525); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(201, 48, 48, 0.5); }
-        button:active { transform: translateY(1px); }
+        button:hover { background: linear-gradient(to bottom, #d43c3c, #9a2525); transform: translateY(-3px); }
         button:disabled { background: linear-gradient(to bottom, #5c5c5c, #3a3a3a); cursor: not-allowed; transform: none; box-shadow: none; color: #a0a0a0; }
 
         .spin-counter {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             background: rgba(20, 5, 5, 0.7);
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             display: inline-block;
             backdrop-filter: blur(5px);
             border: 1px solid #5c2525;
             color: #d4a9a9;
-            box-shadow: 0 0 15px rgba(201, 48, 48, 0.3);
+            box-shadow: 0 0 10px rgba(201, 48, 48, 0.2);
         }
 
         .result-container {
             background: rgba(20, 5, 5, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
+            padding: 24px;
+            margin-top: 22px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.3);
             display: none;
-            animation: fadeIn 0.8s ease;
+            animation: fadeIn 0.6s ease;
             border: 1px solid #5c2525;
             position: relative;
             z-index: 10;
         }
-        .result-title { font-size: 2rem; margin-bottom: 15px; color: #c93030; text-shadow: 1px 1px 3px #000; }
-        .result-text {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: rgba(40, 10, 10, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            color: #e8c4c4;
-            text-shadow: 1px 1px 3px #000;
-            border: 1px solid #5c2525;
-        }
+        .result-title { font-size: 1.6rem; margin-bottom: 10px; color: #c93030; text-shadow: 1px 1px 3px #000; }
+        .result-text { font-size: 1.1rem; font-weight: bold; background: rgba(40,10,10,0.7); padding: 12px; border-radius: 8px; margin: 8px 0; color: #e8c4c4; border: 1px solid #5c2525; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spinning { animation: spin 0.1s linear infinite; }
+        .spinning { animation: spin 0.08s linear infinite; }
 
-        .decoration { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: -1; opacity: 0.1;
+        .decoration { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: -1; opacity: 0.08;
             background-image: radial-gradient(circle at 20% 30%, #c93030 0%, transparent 50%), radial-gradient(circle at 80% 70%, #c93030 0%, transparent 50%); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; z-index: 50; }
 
         @media (max-width: 768px) {
-            .wheels-container { height: 250px; }
+            .wheels-container { height: 300px; }
             .wheel-wrapper.small { width: 120px; height: 120px; }
-            .wheel-wrapper.active { width: 300px; height: 300px; }
+            .wheel-wrapper.active { width: 320px; height: 320px; }
             h1 { font-size: 2.5rem; }
-            .wheel-section span { font-size: 0.6rem; width: 100px; right: -8px; }
-            .wheel-wrapper.active .wheel-section span { font-size: 0.9rem; width: 140px; right: -12px; }
+            .wheel-section span { font-size: 0.6rem; }
+            .wheel-wrapper.active .wheel-section span { font-size: 0.95rem; }
         }
     </style>
 
@@ -272,24 +275,24 @@
         <div class="wheels-container" id="wheelsContainer">
             <div class="wheel-wrapper small left" id="wrapper1">
                 <div class="wheel-label">Domination</div>
+                <div class="pointer" id="pointer1"></div>
                 <div class="wheel" id="wheel1">
-                    <div class="pointer"></div>
                     <div class="wheel-center"></div>
                 </div>
             </div>
 
             <div class="wheel-wrapper small" id="wrapper2" style="left: 50%; top: 60%; transform: translateX(-50%);">
                 <div class="wheel-label">Location</div>
+                <div class="pointer" id="pointer2" style="top:-20px;"></div>
                 <div class="wheel" id="wheel2">
-                    <div class="pointer"></div>
                     <div class="wheel-center"></div>
                 </div>
             </div>
 
             <div class="wheel-wrapper small right" id="wrapper3">
                 <div class="wheel-label">Punishment</div>
+                <div class="pointer" id="pointer3"></div>
                 <div class="wheel" id="wheel3">
-                    <div class="pointer"></div>
                     <div class="wheel-center"></div>
                 </div>
             </div>
@@ -306,263 +309,277 @@
             <p>Dare to spin again?</p>
         </div>
     </div>
-
-    <!-- Part 2: Paste the JavaScript block here, right BEFORE the closing </body> tag -->
-</body>
-</html>
 <script>
-/* Full JS for the wheel — paste this before </body> */
-
-(function(){
-    // parse spin count safely
-    let spinCount = parseInt(localStorage.getItem('wheelSpinCount') || '0', 10);
-    document.addEventListener('DOMContentLoaded', () => {
+        // === persistent spin counter ===
+        let spinCount = parseInt(localStorage.getItem('wheelSpinCount') || '0', 10);
         document.getElementById('spinCount').textContent = spinCount;
-    });
 
-    // Wheel content (kept as your original choices)
-    const wheelData = {
-        wheel1: {
-            sections: [
-                { text: "Headscissor", color: "#2a0f0f", result: "Headscissor" },
-                { text: "Facesitting", color: "#5c2525", result: "Facesitting" },
-                { text: "Face Farting", color: "#1a0808", result: "Face Farting" },
-                { text: "Cum Swallow", color: "#3a1818", result: "Cum Swallow" },
-                { text: "Ballbusting", color: "#4a1c1c", result: "Ballbusting" },
-                { text: "Trampling", color: "#2a0f0f", result: "Trampling" },
-                { text: "Spanking", color: "#5c2525", result: "Spanking" },
-                { text: "Choking", color: "#1a0808", result: "Choking" },
-                { text: "Bondage", color: "#3a1818", result: "Bondage" },
-                { text: "Foot Worship", color: "#4a1c1c", result: "Foot Worship" },
-                { text: "Faceslapping", color: "#2a0f0f", result: "Faceslapping" },
-                { text: "Human Furniture", color: "#5c2525", result: "Human Furniture" },
-                { text: "Human Waste", color: "#1a0808", result: "Human Waste" }
-            ]
-        },
-        wheel2: {
-            sections: [
-                { text: "Bedroom", color: "#5c2525", result: "Bedroom" },
-                { text: "Kitchen", color: "#3a1818", result: "Kitchen" },
-                { text: "Bathroom", color: "#4a1c1c", result: "Bathroom" },
-                { text: "Outdoor", color: "#2a0f0f", result: "Outdoor" },
-                { text: "Dungeon", color: "#5c2525", result: "Dungeon" },
-                { text: "Car", color: "#1a0808", result: "Car" },
-                { text: "Office", color: "#3a1818", result: "Office" },
-                { text: "Staircase", color: "#4a1c1c", result: "Staircase" }
-            ]
-        },
-        wheel3: {
-            sections: [
-                { text: "Post Instagram Story", color: "#3a1818", result: "Post Instagram Story" },
-                { text: "Change Instagram Bio", color: "#4a1c1c", result: "Change Instagram Bio" },
-                { text: "Post on Instagram Feed", color: "#2a0f0f", result: "Post on Instagram Feed" },
-                { text: "Change Profile Picture", color: "#5c2525", result: "Change Profile Picture" },
-                { text: "Add to Instagram Highlights", color: "#1a0808", result: "Add to Instagram Highlights" }
-            ]
+        // === wheel data (kept from your original) ===
+        const wheelData = {
+            wheel1: {
+                sections: [
+                    { text: "Headscissor", color: "#2a0f0f", result: "Headscissor" },
+                    { text: "Facesitting", color: "#5c2525", result: "Facesitting" },
+                    { text: "Face Farting", color: "#1a0808", result: "Face Farting" },
+                    { text: "Cum Swallow", color: "#3a1818", result: "Cum Swallow" },
+                    { text: "Ballbusting", color: "#4a1c1c", result: "Ballbusting" },
+                    { text: "Trampling", color: "#2a0f0f", result: "Trampling" },
+                    { text: "Spanking", color: "#5c2525", result: "Spanking" },
+                    { text: "Choking", color: "#1a0808", result: "Choking" },
+                    { text: "Bondage", color: "#3a1818", result: "Bondage" },
+                    { text: "Foot Worship", color: "#4a1c1c", result: "Foot Worship" },
+                    { text: "Faceslapping", color: "#2a0f0f", result: "Faceslapping" },
+                    { text: "Human Furniture", color: "#5c2525", result: "Human Furniture" },
+                    { text: "Human Waste", color: "#1a0808", result: "Human Waste" }
+                ]
+            },
+            wheel2: {
+                sections: [
+                    { text: "Bedroom", color: "#5c2525", result: "Bedroom" },
+                    { text: "Kitchen", color: "#3a1818", result: "Kitchen" },
+                    { text: "Bathroom", color: "#4a1c1c", result: "Bathroom" },
+                    { text: "Outdoor", color: "#2a0f0f", result: "Outdoor" },
+                    { text: "Dungeon", color: "#5c2525", result: "Dungeon" },
+                    { text: "Car", color: "#1a0808", result: "Car" },
+                    { text: "Office", color: "#3a1818", result: "Office" },
+                    { text: "Staircase", color: "#4a1c1c", result: "Staircase" }
+                ]
+            },
+            wheel3: {
+                sections: [
+                    { text: "Post Instagram Story", color: "#3a1818", result: "Post Instagram Story" },
+                    { text: "Change Instagram Bio", color: "#4a1c1c", result: "Change Instagram Bio" },
+                    { text: "Post on Instagram Feed", color: "#2a0f0f", result: "Post on Instagram Feed" },
+                    { text: "Change Profile Picture", color: "#5c2525", result: "Change Profile Picture" },
+                    { text: "Add to Instagram Highlights", color: "#1a0808", result: "Add to Instagram Highlights" }
+                ]
+            }
+        };
+
+        // helper: clear any previous winner classes
+        function clearWinners(wheelEl) {
+            wheelEl.querySelectorAll('.wheel-section.winner').forEach(s => s.classList.remove('winner'));
         }
-    };
 
-    // Create wheel slices and ensure text stays upright & positioned
-    function initializeWheels() {
-        for (const wheelId in wheelData) {
-            const wheelEl = document.getElementById(wheelId);
-            const sections = wheelData[wheelId].sections;
-            const angle = 360 / sections.length;
-
-            // Clear existing content except pointer and center if present
-            // We'll rebuild to ensure clean layout
-            wheelEl.innerHTML = '<div class="pointer"></div><div class="wheel-center"></div>';
-
-            sections.forEach((section, index) => {
-                const sectionEl = document.createElement('div');
-                sectionEl.className = 'wheel-section';
-                sectionEl.style.backgroundColor = section.color;
-
-                // Rotate the slice into place (slice starts at top-right quadrant)
-                sectionEl.style.transform = `rotate(${index * angle}deg)`;
-
-                // create text element and counter-rotate so it's upright
-                const textEl = document.createElement('span');
-                textEl.textContent = section.text;
-
-                // Counter-rotate text so it's readable regardless of slice rotation
-                // Also translate it vertically to center with translateY(-50%)
-                textEl.style.transform = `rotate(${ -index * angle }deg) translateY(-50%)`;
-
-                sectionEl.appendChild(textEl);
-                wheelEl.appendChild(sectionEl);
-            });
-
-            // ensure wheel has no leftover transition
-            wheelEl.style.transition = '';
-            wheelEl.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    // Activate wheel and show overlay
-    function activateWheel(wrapperId) {
-        document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
-        const aw = document.getElementById(wrapperId);
-        aw.classList.add('active');
-        document.getElementById('overlay').style.display = 'block';
-    }
-
-    // Deactivate and hide overlay when no active wrappers remain
-    function deactivateWheel(wrapperId) {
-        const wrapper = document.getElementById(wrapperId);
-        if (wrapper) wrapper.classList.remove('active');
-
-        setTimeout(() => {
-            const anyActive = document.querySelectorAll('.wheel-wrapper.active').length > 0;
-            if (!anyActive) document.getElementById('overlay').style.display = 'none';
-        }, 500);
-    }
-
-    // Spins a single wheel. Returns a Promise that resolves with the result text.
-    function spinWheel(wheelId, wrapperId, duration) {
-        return new Promise((resolve) => {
-            // Zoom the wheel
-            activateWheel(wrapperId);
-
-            // small delay to allow zoom animation to finish
-            setTimeout(() => {
+        // Build slices and radial text for a wheel element
+        function initializeWheels() {
+            for (const wheelId in wheelData) {
                 const wheel = document.getElementById(wheelId);
                 const sections = wheelData[wheelId].sections;
                 const angle = 360 / sections.length;
 
-                // Randomize number of full rotations and which section to land on
-                const rotations = 2 + Math.floor(Math.random() * 4); // 2..5 full rotations
-                const randomSection = Math.floor(Math.random() * sections.length);
-                const targetDegrees = rotations * 360 + (randomSection * angle);
+                // clear existing children (keep center/pointer if present - we rebuild to be safe)
+                wheel.innerHTML = '<div class="wheel-center"></div>';
 
-                // Add quick spinning visual while we set final rotation
-                wheel.classList.add('spinning');
+                // compute an outward offset for the text (px)
+                // center -> we'll grab actual wheel size (fallback if not ready)
+                const wRect = wheel.getBoundingClientRect();
+                const outerRadius = (wRect && wRect.width) ? wRect.width / 2 : 200;
+                // offset pushes the label toward the outer rim (smaller value for small wheels)
+                const textOffset = Math.max(outerRadius - 36, 70);
 
-                // small gap to show spinning class then perform smooth deceleration to target
-                setTimeout(() => {
-                    wheel.classList.remove('spinning');
-                    // apply smooth transition
-                    wheel.style.transition = `transform ${duration}ms cubic-bezier(0.2, 0.8, 0.3, 1)`;
-                    wheel.style.transform = `rotate(${targetDegrees}deg)`;
-                }, 80);
+                sections.forEach((section, index) => {
+                    const sectionEl = document.createElement('div');
+                    sectionEl.className = 'wheel-section';
+                    sectionEl.style.backgroundColor = section.color;
 
-                // After animation done, compute result
-                setTimeout(() => {
-                    // effective final rotation within 0..360
-                    const effectiveDegrees = targetDegrees % 360;
-                    // Calculate which section is at the top (pointer at top). This math matches slice creation.
-                    const sectionIndex = Math.floor((360 - effectiveDegrees) / angle) % sections.length;
-                    const result = sections[(sectionIndex + sections.length) % sections.length].result;
+                    // rotate the slice into place around the center
+                    sectionEl.style.transform = `rotate(${index * angle}deg) translate(-50%, -100%)`;
 
-                    // clean up transform so next spin resets cleanly
-                    // keep the wheel visually at final rotation until wrapper shrinks
-                    // remove transition (so resetting to 0 later is immediate or we can animate reset)
-                    setTimeout(() => {
-                        wheel.style.transition = '';
-                    }, 50);
+                    // create the text label. Use writing-mode so text reads rim → center
+                    const textEl = document.createElement('span');
+                    textEl.textContent = section.text;
 
-                    // shrink back
-                    deactivateWheel(wrapperId);
+                    // Position the text:
+                    // - counter-rotate so the vertical text reads along the radius
+                    // - translate outward by textOffset (px)
+                    // - translateY(-50%) to vertically center the label on the radius
+                    // Note: ordering matters: rotate -> translateX (outward) -> translateY center
+                    textEl.style.transform = `rotate(${-index * angle}deg) translateX(${textOffset}px) translateY(-50%)`;
 
-                    resolve(result);
-                }, duration + 120); // a touch after the transition ends
-            }, 450); // allow some zoom time
-        });
-    }
+                    // small accessibility for long labels: reduce width to avoid overflow
+                    textEl.style.whiteSpace = 'nowrap';
 
-    // Chain three wheels with small delays
-    async function startChainSpin() {
-        const spinButton = document.getElementById('spinButton');
-        spinButton.disabled = true;
-        spinButton.textContent = 'Spinning...';
+                    sectionEl.appendChild(textEl);
+                    wheel.appendChild(sectionEl);
+                });
 
-        // Hide previous result
-        const resultContainer = document.getElementById('resultContainer');
-        resultContainer.style.display = 'none';
-        document.getElementById('resultText').textContent = '';
-
-        // Reset wheel transforms so each spin starts from 0 visually
-        ['wheel1','wheel2','wheel3'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.transition = '';
-                el.style.transform = 'rotate(0deg)';
+                // ensure wheel starts at 0 rotation visually
+                wheel.style.transition = '';
+                wheel.style.transform = 'rotate(0deg)';
             }
-        });
-
-        const results = [];
-
-        try {
-            // Wheel 1
-            const r1 = await spinWheel('wheel1','wrapper1', 3000);
-            results.push(r1);
-
-            await new Promise(r => setTimeout(r, 400));
-
-            // Wheel 2
-            const r2 = await spinWheel('wheel2','wrapper2', 2500);
-            results.push(r2);
-
-            await new Promise(r => setTimeout(r, 350));
-
-            // Wheel 3
-            const r3 = await spinWheel('wheel3','wrapper3', 2000);
-            results.push(r3);
-        } catch (err) {
-            console.error('Spin error', err);
         }
 
-        // show result
-        showResult(results);
+        // Activate a wheel (zoom to center)
+        function activateWheel(wrapperId) {
+            document.querySelectorAll('.wheel-wrapper').forEach(wrapper => wrapper.classList.remove('active'));
+            const activeWrapper = document.getElementById(wrapperId);
+            if (activeWrapper) activeWrapper.classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+        }
 
-        // update spin counter
-        spinCount = (parseInt(spinCount, 10) || 0) + 1;
-        document.getElementById('spinCount').textContent = spinCount;
-        localStorage.setItem('wheelSpinCount', spinCount);
+        function deactivateWheel(wrapperId) {
+            const wrapper = document.getElementById(wrapperId);
+            if (wrapper) wrapper.classList.remove('active');
 
-        spinButton.disabled = false;
-        spinButton.textContent = 'Spin the Wheel of Fate';
-    }
-
-    // Display the final assembled result nicely
-    function showResult(results) {
-        const resultText = document.getElementById('resultText');
-        // Format: "Domination in the Location + Punishment"
-        const text = `${results[0]} in the ${results[1]} + ${results[2]}`;
-        resultText.textContent = text;
-
-        const rc = document.getElementById('resultContainer');
-        rc.style.display = 'block';
-    }
-
-    // Initialize on load
-    window.addEventListener('load', () => {
-        initializeWheels();
-
-        // attach click
-        document.getElementById('spinButton').addEventListener('click', startChainSpin);
-
-        // Optional: allow clicking the small wrappers to preview/zoom them
-        document.querySelectorAll('.wheel-wrapper').forEach(wrapper => {
-            wrapper.addEventListener('click', (e) => {
-                // If already active, deactivate; otherwise activate clicked one
-                if (wrapper.classList.contains('active')) {
-                    wrapper.classList.remove('active');
+            setTimeout(() => {
+                const activeWheels = document.querySelectorAll('.wheel-wrapper.active');
+                if (activeWheels.length === 0) {
                     document.getElementById('overlay').style.display = 'none';
-                } else {
-                    document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
-                    wrapper.classList.add('active');
-                    document.getElementById('overlay').style.display = 'block';
+                }
+            }, 500);
+        }
+
+        // spins a single wheel; returns result string
+        function spinWheel(wheelId, wrapperId, durationMs) {
+            return new Promise(resolve => {
+                activateWheel(wrapperId);
+
+                setTimeout(() => {
+                    const wheel = document.getElementById(wheelId);
+                    const sections = wheelData[wheelId].sections;
+                    const angle = 360 / sections.length;
+
+                    // choose random final section
+                    const randomSection = Math.floor(Math.random() * sections.length);
+
+                    // choose a high number of full rotations for a dramatic spin
+                    const fullRotations = 8 + Math.floor(Math.random() * 6); // 8..13 full turns
+                    const degrees = fullRotations * 360 + (randomSection * angle) + (Math.random() * (angle - 2) ); // add slight within-slice jitter
+
+                    // visually show fast spin while preparing final rotation
+                    wheel.classList.add('spinning');
+
+                    setTimeout(() => {
+                        wheel.classList.remove('spinning');
+                        wheel.style.transition = `transform ${durationMs}ms cubic-bezier(0.18, 0.85, 0.32, 1)`;
+                        wheel.style.transform = `rotate(${degrees}deg)`;
+                    }, 100);
+
+                    // when the animation ends, compute result
+                    setTimeout(() => {
+                        const effectiveDegrees = degrees % 360;
+                        const sectionIndex = Math.floor((360 - effectiveDegrees + (angle/2)) / angle) % sections.length;
+                        const normalizedIndex = ((sectionIndex % sections.length) + sections.length) % sections.length;
+                        const result = sections[normalizedIndex].result;
+
+                        // highlight winning slice
+                        clearWinners(wheel);
+                        const sliceEls = wheel.querySelectorAll('.wheel-section');
+                        if (sliceEls[normalizedIndex]) {
+                            sliceEls[normalizedIndex].classList.add('winner');
+                            // quick pointer bounce
+                            const parentWrapper = document.getElementById(wrapperId);
+                            const pointer = parentWrapper.querySelector('.pointer');
+                            if (pointer) {
+                                pointer.classList.add('bounce');
+                                setTimeout(() => pointer.classList.remove('bounce'), 300);
+                            }
+                        }
+
+                        // keep wheel at final position for user to see -> then collapse wrapper
+                        setTimeout(() => { deactivateWheel(wrapperId); }, 700);
+
+                        resolve(result);
+                    }, durationMs + 160);
+                }, 550); // wait for zoom animation before spin
+            });
+        }
+
+        // chain spin all three wheels
+        async function startChainSpin() {
+            const spinButton = document.getElementById('spinButton');
+            spinButton.disabled = true;
+            spinButton.textContent = 'Spinning...';
+
+            // hide previous result
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.style.display = 'none';
+            document.getElementById('resultText').textContent = '';
+
+            // reset transforms so each wheel starts from 0 visually (it keeps previous final rotation until reset)
+            ['wheel1','wheel2','wheel3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    // do NOT force-jump if currently spinning — but we reset to 0 to avoid accumulation across spins
+                    el.style.transition = '';
+                    el.style.transform = 'rotate(0deg)';
+                    clearWinners(el);
                 }
             });
-        });
 
-        // clicking overlay closes active wheel
-        document.getElementById('overlay').addEventListener('click', () => {
-            document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
-            document.getElementById('overlay').style.display = 'none';
-        });
-    });
+            const results = [];
 
-})(); 
-</script>
+            // spin durations (longer, dramatic)
+            try {
+                const r1 = await spinWheel('wheel1','wrapper1', 6000);
+                results.push(r1);
+
+                await new Promise(r => setTimeout(r, 500));
+
+                const r2 = await spinWheel('wheel2','wrapper2', 5200);
+                results.push(r2);
+
+                await new Promise(r => setTimeout(r, 450));
+
+                const r3 = await spinWheel('wheel3','wrapper3', 4200);
+                results.push(r3);
+            } catch (err) {
+                console.error('Spin error', err);
+            }
+
+            showResult(results);
+
+            // update spin counter
+            spinCount = (parseInt(spinCount, 10) || 0) + 1;
+            document.getElementById('spinCount').textContent = spinCount;
+            localStorage.setItem('wheelSpinCount', spinCount);
+
+            spinButton.disabled = false;
+            spinButton.textContent = 'Spin the Wheel of Fate';
+        }
+
+        // display final assembled result
+        function showResult(results) {
+            const resultText = document.getElementById('resultText');
+            resultText.textContent = `${results[0]} in the ${results[1]} + ${results[2]}`;
+
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.style.display = 'block';
+        }
+
+        // initialize + event bindings
+        window.addEventListener('load', () => {
+            initializeWheels();
+
+            // wire spin button
+            document.getElementById('spinButton').addEventListener('click', startChainSpin);
+
+            // wrapper click behavior to preview zoom
+            document.querySelectorAll('.wheel-wrapper').forEach(wrapper => {
+                wrapper.addEventListener('click', () => {
+                    if (wrapper.classList.contains('active')) {
+                        wrapper.classList.remove('active');
+                        document.getElementById('overlay').style.display = 'none';
+                    } else {
+                        document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
+                        wrapper.classList.add('active');
+                        document.getElementById('overlay').style.display = 'block';
+                    }
+                });
+            });
+
+            // clicking overlay closes active wheel
+            document.getElementById('overlay').addEventListener('click', () => {
+                document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
+                document.getElementById('overlay').style.display = 'none';
+            });
+
+            // re-run layout when window resizes to keep text offset sensible
+            window.addEventListener('resize', () => {
+                initializeWheels();
+            });
+        });
+    </script>
+</body>
+</html>
