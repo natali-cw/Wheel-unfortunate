@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Natali's Unfortunate Wheel</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cinzel', 'Georgia', serif;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cinzel', 'Georgia', serif; }
+
         body {
             background: radial-gradient(circle, #1a0a0a, #0d0404);
             min-height: 100vh;
@@ -24,19 +19,11 @@
             text-align: center;
             overflow-x: hidden;
         }
-        
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .header {
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 10;
-        }
-        
+
+        .container { max-width: 1200px; width: 100%; text-align: center; }
+
+        .header { margin-bottom: 30px; position: relative; z-index: 10; }
+
         h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
@@ -46,7 +33,7 @@
             position: relative;
             display: inline-block;
         }
-        
+
         h1::after {
             content: "";
             position: absolute;
@@ -56,14 +43,9 @@
             height: 3px;
             background: linear-gradient(90deg, transparent, #c93030, transparent);
         }
-        
-        .subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #b8a6a6;
-            font-style: italic;
-        }
-        
+
+        .subtitle { font-size: 1.3rem; margin-bottom: 10px; color: #b8a6a6; font-style: italic; }
+
         .wheels-container {
             display: flex;
             justify-content: center;
@@ -72,18 +54,10 @@
             height: 300px;
             align-items: flex-start;
         }
-        
-        .wheel-wrapper {
-            position: absolute;
-            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .wheel-wrapper.small {
-            width: 150px;
-            height: 150px;
-            opacity: 0.7;
-        }
-        
+
+        .wheel-wrapper { position: absolute; transition: all 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .wheel-wrapper.small { width: 150px; height: 150px; opacity: 0.8; }
         .wheel-wrapper.active {
             width: 400px;
             height: 400px;
@@ -93,17 +67,10 @@
             top: 50%;
             transform: translate(-50%, -50%);
         }
-        
-        .wheel-wrapper.left {
-            left: 25%;
-            top: 20%;
-        }
-        
-        .wheel-wrapper.right {
-            right: 25%;
-            top: 20%;
-        }
-        
+
+        .wheel-wrapper.left { left: 25%; top: 20%; }
+        .wheel-wrapper.right { right: 25%; top: 20%; }
+
         .wheel-label {
             font-size: 1.2rem;
             margin-bottom: 10px;
@@ -115,12 +82,8 @@
             border-radius: 5px;
             transition: all 0.5s ease;
         }
-        
-        .wheel-wrapper.active .wheel-label {
-            font-size: 1.8rem;
-            padding: 10px 20px;
-        }
-        
+        .wheel-wrapper.active .wheel-label { font-size: 1.8rem; padding: 10px 20px; }
+
         .wheel {
             width: 100%;
             height: 100%;
@@ -132,12 +95,12 @@
             transition: all 0.5s ease;
             background: #1a0808;
         }
-        
         .wheel-wrapper.active .wheel {
             border-width: 12px;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(0, 0, 0, 0.9);
         }
-        
+
+        /* Each slice (top-right quadrant) is rotated in JS */
         .wheel-section {
             position: absolute;
             width: 50%;
@@ -145,30 +108,27 @@
             top: 0;
             right: 0;
             transform-origin: 0% 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+            overflow: visible;
+        }
+
+        /* Span is absolutely positioned, we'll counter-rotate it in JS so text is upright */
+        .wheel-section span {
+            position: absolute;
+            right: -10px;         /* nudges text toward the outer rim */
+            top: 50%;
+            transform-origin: center;
+            transform: translateY(-50%);
+            display: block;
+            width: 130px;
+            text-align: center;
+            font-size: 0.8rem;
+            line-height: 1.2;
             color: #f0e6e6;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
-            text-align: center;
-            padding: 5px;
-            overflow: hidden;
+            pointer-events: none;
         }
-        
-        .wheel-section span {
-            transform: rotate(45deg);
-            display: block;
-            width: 100%;
-            text-align: center;
-            font-size: 0.7rem;
-            line-height: 1.2;
-        }
-        
-        .wheel-wrapper.active .wheel-section span {
-            font-size: 1.1rem;
-        }
-        
+        .wheel-wrapper.active .wheel-section span { font-size: 1.1rem; width: 170px; right: -18px; }
+
         .wheel-center {
             position: absolute;
             width: 20px;
@@ -183,13 +143,8 @@
             border: 2px solid #5c2525;
             transition: all 0.5s ease;
         }
-        
-        .wheel-wrapper.active .wheel-center {
-            width: 40px;
-            height: 40px;
-            border-width: 4px;
-        }
-        
+        .wheel-wrapper.active .wheel-center { width: 40px; height: 40px; border-width: 4px; }
+
         .pointer {
             position: absolute;
             top: -10px;
@@ -204,20 +159,15 @@
             filter: drop-shadow(0 0 3px #000);
             transition: all 0.5s ease;
         }
-        
         .wheel-wrapper.active .pointer {
             top: -20px;
             border-left-width: 18px;
             border-right-width: 18px;
             border-top-width: 25px;
         }
-        
-        .controls {
-            margin: 30px 0;
-            position: relative;
-            z-index: 10;
-        }
-        
+
+        .controls { margin: 30px 0; position: relative; z-index: 10; }
+
         button {
             background: linear-gradient(to bottom, #c93030, #8a1f1f);
             color: #f0e6e6;
@@ -235,7 +185,6 @@
             overflow: hidden;
             margin-bottom: 15px;
         }
-        
         button::before {
             content: "";
             position: absolute;
@@ -246,29 +195,11 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: 0.5s;
         }
-        
-        button:hover::before {
-            left: 100%;
-        }
-        
-        button:hover {
-            background: linear-gradient(to bottom, #d43c3c, #9a2525);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(201, 48, 48, 0.5);
-        }
-        
-        button:active {
-            transform: translateY(1px);
-        }
-        
-        button:disabled {
-            background: linear-gradient(to bottom, #5c5c5c, #3a3a3a);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            color: #a0a0a0;
-        }
-        
+        button:hover::before { left: 100%; }
+        button:hover { background: linear-gradient(to bottom, #d43c3c, #9a2525); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(201, 48, 48, 0.5); }
+        button:active { transform: translateY(1px); }
+        button:disabled { background: linear-gradient(to bottom, #5c5c5c, #3a3a3a); cursor: not-allowed; transform: none; box-shadow: none; color: #a0a0a0; }
+
         .spin-counter {
             font-size: 1.4rem;
             background: rgba(20, 5, 5, 0.7);
@@ -280,7 +211,7 @@
             color: #d4a9a9;
             box-shadow: 0 0 15px rgba(201, 48, 48, 0.3);
         }
-        
+
         .result-container {
             background: rgba(20, 5, 5, 0.8);
             backdrop-filter: blur(10px);
@@ -294,14 +225,7 @@
             position: relative;
             z-index: 10;
         }
-        
-        .result-title {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: #c93030;
-            text-shadow: 1px 1px 3px #000;
-        }
-        
+        .result-title { font-size: 2rem; margin-bottom: 15px; color: #c93030; text-shadow: 1px 1px 3px #000; }
         .result-text {
             font-size: 1.8rem;
             font-weight: bold;
@@ -313,86 +237,38 @@
             text-shadow: 1px 1px 3px #000;
             border: 1px solid #5c2525;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .spinning {
-            animation: spin 0.1s linear infinite;
-        }
-        
-        .decoration {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.1;
-            background-image: 
-                radial-gradient(circle at 20% 30%, #c93030 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, #c93030 0%, transparent 50%);
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            z-index: 50;
-        }
-        
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinning { animation: spin 0.1s linear infinite; }
+
+        .decoration { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: -1; opacity: 0.1;
+            background-image: radial-gradient(circle at 20% 30%, #c93030 0%, transparent 50%), radial-gradient(circle at 80% 70%, #c93030 0%, transparent 50%); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; z-index: 50; }
+
         @media (max-width: 768px) {
-            .wheels-container {
-                height: 250px;
-            }
-            
-            .wheel-wrapper.small {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .wheel-wrapper.active {
-                width: 300px;
-                height: 300px;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .wheel-section span {
-                font-size: 0.6rem;
-            }
-            
-            .wheel-wrapper.active .wheel-section span {
-                font-size: 0.9rem;
-            }
+            .wheels-container { height: 250px; }
+            .wheel-wrapper.small { width: 120px; height: 120px; }
+            .wheel-wrapper.active { width: 300px; height: 300px; }
+            h1 { font-size: 2.5rem; }
+            .wheel-section span { font-size: 0.6rem; width: 100px; right: -8px; }
+            .wheel-wrapper.active .wheel-section span { font-size: 0.9rem; width: 140px; right: -12px; }
         }
     </style>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="decoration"></div>
     <div class="overlay" id="overlay"></div>
-    
+
     <div class="container">
         <div class="header">
             <h1>Natali's Unfortunate Wheel</h1>
             <p class="subtitle">Spin your fate and embrace the consequences...</p>
         </div>
-        
+
         <div class="wheels-container" id="wheelsContainer">
             <div class="wheel-wrapper small left" id="wrapper1">
                 <div class="wheel-label">Domination</div>
@@ -401,7 +277,7 @@
                     <div class="wheel-center"></div>
                 </div>
             </div>
-            
+
             <div class="wheel-wrapper small" id="wrapper2" style="left: 50%; top: 60%; transform: translateX(-50%);">
                 <div class="wheel-label">Location</div>
                 <div class="wheel" id="wheel2">
@@ -409,7 +285,7 @@
                     <div class="wheel-center"></div>
                 </div>
             </div>
-            
+
             <div class="wheel-wrapper small right" id="wrapper3">
                 <div class="wheel-label">Punishment</div>
                 <div class="wheel" id="wheel3">
@@ -418,12 +294,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="controls">
             <button id="spinButton">Spin the Wheel of Fate</button>
             <div class="spin-counter">Total Spins: <span id="spinCount">0</span></div>
         </div>
-        
+
         <div class="result-container" id="resultContainer">
             <div class="result-title">Your Unfortunate Destiny:</div>
             <div class="result-text" id="resultText"></div>
@@ -431,214 +307,262 @@
         </div>
     </div>
 
-    <script>
-        // Initialize spin counter from localStorage or set to 0
-        let spinCount = localStorage.getItem('wheelSpinCount') || 0;
+    <!-- Part 2: Paste the JavaScript block here, right BEFORE the closing </body> tag -->
+</body>
+</html>
+<script>
+/* Full JS for the wheel — paste this before </body> */
+
+(function(){
+    // parse spin count safely
+    let spinCount = parseInt(localStorage.getItem('wheelSpinCount') || '0', 10);
+    document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('spinCount').textContent = spinCount;
+    });
 
-        // Wheel data with domination theme
-        const wheelData = {
-            wheel1: {
-                sections: [
-                    { text: "Headscissor", color: "#2a0f0f", result: "Headscissor" },
-                    { text: "Facesitting", color: "#5c2525", result: "Facesitting" },
-                    { text: "Face Farting", color: "#1a0808", result: "Face Farting" },
-                    { text: "Cum Swallow", color: "#3a1818", result: "Cum Swallow" },
-                    { text: "Ballbusting", color: "#4a1c1c", result: "Ballbusting" },
-                    { text: "Trampling", color: "#2a0f0f", result: "Trampling" },
-                    { text: "Spanking", color: "#5c2525", result: "Spanking" },
-                    { text: "Choking", color: "#1a0808", result: "Choking" },
-                    { text: "Bondage", color: "#3a1818", result: "Bondage" },
-                    { text: "Foot Worship", color: "#4a1c1c", result: "Foot Worship" },
-                    { text: "Faceslapping", color: "#2a0f0f", result: "Faceslapping" },
-                    { text: "Human Furniture", color: "#5c2525", result: "Human Furniture" },
-                    { text: "Human Waste", color: "#1a0808", result: "Human Waste" }
-                ]
-            },
-            wheel2: {
-                sections: [
-                    { text: "Bedroom", color: "#5c2525", result: "Bedroom" },
-                    { text: "Kitchen", color: "#3a1818", result: "Kitchen" },
-                    { text: "Bathroom", color: "#4a1c1c", result: "Bathroom" },
-                    { text: "Outdoor", color: "#2a0f0f", result: "Outdoor" },
-                    { text: "Dungeon", color: "#5c2525", result: "Dungeon" },
-                    { text: "Car", color: "#1a0808", result: "Car" },
-                    { text: "Office", color: "#3a1818", result: "Office" },
-                    { text: "Staircase", color: "#4a1c1c", result: "Staircase" }
-                ]
-            },
-            wheel3: {
-                sections: [
-                    { text: "Post Instagram Story", color: "#3a1818", result: "Post Instagram Story" },
-                    { text: "Change Instagram Bio", color: "#4a1c1c", result: "Change Instagram Bio" },
-                    { text: "Post on Instagram Feed", color: "#2a0f0f", result: "Post on Instagram Feed" },
-                    { text: "Change Profile Picture", color: "#5c2525", result: "Change Profile Picture" },
-                    { text: "Add to Instagram Highlights", color: "#1a0808", result: "Add to Instagram Highlights" }
-                ]
-            }
-        };
+    // Wheel content (kept as your original choices)
+    const wheelData = {
+        wheel1: {
+            sections: [
+                { text: "Headscissor", color: "#2a0f0f", result: "Headscissor" },
+                { text: "Facesitting", color: "#5c2525", result: "Facesitting" },
+                { text: "Face Farting", color: "#1a0808", result: "Face Farting" },
+                { text: "Cum Swallow", color: "#3a1818", result: "Cum Swallow" },
+                { text: "Ballbusting", color: "#4a1c1c", result: "Ballbusting" },
+                { text: "Trampling", color: "#2a0f0f", result: "Trampling" },
+                { text: "Spanking", color: "#5c2525", result: "Spanking" },
+                { text: "Choking", color: "#1a0808", result: "Choking" },
+                { text: "Bondage", color: "#3a1818", result: "Bondage" },
+                { text: "Foot Worship", color: "#4a1c1c", result: "Foot Worship" },
+                { text: "Faceslapping", color: "#2a0f0f", result: "Faceslapping" },
+                { text: "Human Furniture", color: "#5c2525", result: "Human Furniture" },
+                { text: "Human Waste", color: "#1a0808", result: "Human Waste" }
+            ]
+        },
+        wheel2: {
+            sections: [
+                { text: "Bedroom", color: "#5c2525", result: "Bedroom" },
+                { text: "Kitchen", color: "#3a1818", result: "Kitchen" },
+                { text: "Bathroom", color: "#4a1c1c", result: "Bathroom" },
+                { text: "Outdoor", color: "#2a0f0f", result: "Outdoor" },
+                { text: "Dungeon", color: "#5c2525", result: "Dungeon" },
+                { text: "Car", color: "#1a0808", result: "Car" },
+                { text: "Office", color: "#3a1818", result: "Office" },
+                { text: "Staircase", color: "#4a1c1c", result: "Staircase" }
+            ]
+        },
+        wheel3: {
+            sections: [
+                { text: "Post Instagram Story", color: "#3a1818", result: "Post Instagram Story" },
+                { text: "Change Instagram Bio", color: "#4a1c1c", result: "Change Instagram Bio" },
+                { text: "Post on Instagram Feed", color: "#2a0f0f", result: "Post on Instagram Feed" },
+                { text: "Change Profile Picture", color: "#5c2525", result: "Change Profile Picture" },
+                { text: "Add to Instagram Highlights", color: "#1a0808", result: "Add to Instagram Highlights" }
+            ]
+        }
+    };
 
-        // Initialize wheels
-        function initializeWheels() {
-            for (let wheelId in wheelData) {
+    // Create wheel slices and ensure text stays upright & positioned
+    function initializeWheels() {
+        for (const wheelId in wheelData) {
+            const wheelEl = document.getElementById(wheelId);
+            const sections = wheelData[wheelId].sections;
+            const angle = 360 / sections.length;
+
+            // Clear existing content except pointer and center if present
+            // We'll rebuild to ensure clean layout
+            wheelEl.innerHTML = '<div class="pointer"></div><div class="wheel-center"></div>';
+
+            sections.forEach((section, index) => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'wheel-section';
+                sectionEl.style.backgroundColor = section.color;
+
+                // Rotate the slice into place (slice starts at top-right quadrant)
+                sectionEl.style.transform = `rotate(${index * angle}deg)`;
+
+                // create text element and counter-rotate so it's upright
+                const textEl = document.createElement('span');
+                textEl.textContent = section.text;
+
+                // Counter-rotate text so it's readable regardless of slice rotation
+                // Also translate it vertically to center with translateY(-50%)
+                textEl.style.transform = `rotate(${ -index * angle }deg) translateY(-50%)`;
+
+                sectionEl.appendChild(textEl);
+                wheelEl.appendChild(sectionEl);
+            });
+
+            // ensure wheel has no leftover transition
+            wheelEl.style.transition = '';
+            wheelEl.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Activate wheel and show overlay
+    function activateWheel(wrapperId) {
+        document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
+        const aw = document.getElementById(wrapperId);
+        aw.classList.add('active');
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    // Deactivate and hide overlay when no active wrappers remain
+    function deactivateWheel(wrapperId) {
+        const wrapper = document.getElementById(wrapperId);
+        if (wrapper) wrapper.classList.remove('active');
+
+        setTimeout(() => {
+            const anyActive = document.querySelectorAll('.wheel-wrapper.active').length > 0;
+            if (!anyActive) document.getElementById('overlay').style.display = 'none';
+        }, 500);
+    }
+
+    // Spins a single wheel. Returns a Promise that resolves with the result text.
+    function spinWheel(wheelId, wrapperId, duration) {
+        return new Promise((resolve) => {
+            // Zoom the wheel
+            activateWheel(wrapperId);
+
+            // small delay to allow zoom animation to finish
+            setTimeout(() => {
                 const wheel = document.getElementById(wheelId);
                 const sections = wheelData[wheelId].sections;
                 const angle = 360 / sections.length;
-                
-                // Clear any existing sections
-                wheel.innerHTML = '<div class="pointer"></div><div class="wheel-center"></div>';
-                
-                sections.forEach((section, index) => {
-                    const sectionEl = document.createElement('div');
-                    sectionEl.className = 'wheel-section';
-                    sectionEl.style.backgroundColor = section.color;
-                    sectionEl.style.transform = `rotate(${index * angle}deg)`;
-                    sectionEl.innerHTML = `<span>${section.text}</span>`;
-                    wheel.appendChild(sectionEl);
-                });
-            }
-        }
 
-        // Activate a wheel (zoom to center)
-        function activateWheel(wrapperId) {
-            const wrappers = document.querySelectorAll('.wheel-wrapper');
-            wrappers.forEach(wrapper => {
-                wrapper.classList.remove('active');
-            });
-            
-            const activeWrapper = document.getElementById(wrapperId);
-            activeWrapper.classList.add('active');
-            
-            // Show overlay
-            document.getElementById('overlay').style.display = 'block';
-        }
+                // Randomize number of full rotations and which section to land on
+                const rotations = 2 + Math.floor(Math.random() * 4); // 2..5 full rotations
+                const randomSection = Math.floor(Math.random() * sections.length);
+                const targetDegrees = rotations * 360 + (randomSection * angle);
 
-        // Deactivate a wheel (return to small size)
-        function deactivateWheel(wrapperId) {
-            const wrapper = document.getElementById(wrapperId);
-            wrapper.classList.remove('active');
-            
-            // Hide overlay if no active wheels
-            setTimeout(() => {
-                const activeWheels = document.querySelectorAll('.wheel-wrapper.active');
-                if (activeWheels.length === 0) {
-                    document.getElementById('overlay').style.display = 'none';
-                }
-            }, 500);
-        }
+                // Add quick spinning visual while we set final rotation
+                wheel.classList.add('spinning');
 
-        // Spin a wheel with zoom animation
-        function spinWheel(wheelId, wrapperId, duration, callback) {
-            return new Promise((resolve) => {
-                // Activate the wheel (zoom to center)
-                activateWheel(wrapperId);
-                
+                // small gap to show spinning class then perform smooth deceleration to target
                 setTimeout(() => {
-                    const wheel = document.getElementById(wheelId);
-                    const sections = wheelData[wheelId].sections;
-                    const angle = 360 / sections.length;
-                    
-                    // Calculate random rotation (at least 2 full rotations plus random section)
-                    const rotations = 2 + Math.floor(Math.random() * 3);
-                    const randomSection = Math.floor(Math.random() * sections.length);
-                    const degrees = rotations * 360 + (randomSection * angle);
-                    
-                    // Add spinning class for continuous spin animation
-                    wheel.classList.add('spinning');
-                    
-                    // After a short delay, set the final rotation
+                    wheel.classList.remove('spinning');
+                    // apply smooth transition
+                    wheel.style.transition = `transform ${duration}ms cubic-bezier(0.2, 0.8, 0.3, 1)`;
+                    wheel.style.transform = `rotate(${targetDegrees}deg)`;
+                }, 80);
+
+                // After animation done, compute result
+                setTimeout(() => {
+                    // effective final rotation within 0..360
+                    const effectiveDegrees = targetDegrees % 360;
+                    // Calculate which section is at the top (pointer at top). This math matches slice creation.
+                    const sectionIndex = Math.floor((360 - effectiveDegrees) / angle) % sections.length;
+                    const result = sections[(sectionIndex + sections.length) % sections.length].result;
+
+                    // clean up transform so next spin resets cleanly
+                    // keep the wheel visually at final rotation until wrapper shrinks
+                    // remove transition (so resetting to 0 later is immediate or we can animate reset)
                     setTimeout(() => {
-                        wheel.style.transition = `transform ${duration}ms cubic-bezier(0.2, 0.8, 0.3, 1)`;
-                        wheel.style.transform = `rotate(${degrees}deg)`;
-                        wheel.classList.remove('spinning');
-                    }, 100);
-                    
-                    // After animation completes, get the result and call callback
-                    setTimeout(() => {
-                        // Calculate which section is at the top (0 degrees)
-                        const effectiveDegrees = degrees % 360;
-                        const sectionIndex = Math.floor((360 - effectiveDegrees) / angle) % sections.length;
-                        const result = sections[sectionIndex].result;
-                        
-                        // Deactivate the wheel (return to small size)
-                        deactivateWheel(wrapperId);
-                        
-                        if (callback) callback(result);
-                        resolve(result);
-                    }, duration + 100);
-                }, 800); // Delay before starting spin to allow zoom animation
-            });
+                        wheel.style.transition = '';
+                    }, 50);
+
+                    // shrink back
+                    deactivateWheel(wrapperId);
+
+                    resolve(result);
+                }, duration + 120); // a touch after the transition ends
+            }, 450); // allow some zoom time
+        });
+    }
+
+    // Chain three wheels with small delays
+    async function startChainSpin() {
+        const spinButton = document.getElementById('spinButton');
+        spinButton.disabled = true;
+        spinButton.textContent = 'Spinning...';
+
+        // Hide previous result
+        const resultContainer = document.getElementById('resultContainer');
+        resultContainer.style.display = 'none';
+        document.getElementById('resultText').textContent = '';
+
+        // Reset wheel transforms so each spin starts from 0 visually
+        ['wheel1','wheel2','wheel3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.transition = '';
+                el.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        const results = [];
+
+        try {
+            // Wheel 1
+            const r1 = await spinWheel('wheel1','wrapper1', 3000);
+            results.push(r1);
+
+            await new Promise(r => setTimeout(r, 400));
+
+            // Wheel 2
+            const r2 = await spinWheel('wheel2','wrapper2', 2500);
+            results.push(r2);
+
+            await new Promise(r => setTimeout(r, 350));
+
+            // Wheel 3
+            const r3 = await spinWheel('wheel3','wrapper3', 2000);
+            results.push(r3);
+        } catch (err) {
+            console.error('Spin error', err);
         }
 
-        // Chain spin the wheels
-        async function startChainSpin() {
-            // Disable spin button during animation
-            const spinButton = document.getElementById('spinButton');
-            spinButton.disabled = true;
-            spinButton.textContent = 'Spinning...';
-            
-            // Hide previous result
-            const resultContainer = document.getElementById('resultContainer');
-            resultContainer.style.display = 'none';
-            
-            // Reset wheel positions
-            document.getElementById('wheel1').style.transform = 'rotate(0deg)';
-            document.getElementById('wheel2').style.transform = 'rotate(0deg)';
-            document.getElementById('wheel3').style.transform = 'rotate(0deg)';
-            
-            // Chain the wheel spins with zoom animations
-            let results = [];
-            
-            // Spin wheel 1
-            await spinWheel('wheel1', 'wrapper1', 3000, (result1) => {
-                results.push(result1);
-            });
-            
-            // Small delay between wheels
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Spin wheel 2
-            await spinWheel('wheel2', 'wrapper2', 2500, (result2) => {
-                results.push(result2);
-            });
-            
-            // Small delay between wheels
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Spin wheel 3
-            await spinWheel('wheel3', 'wrapper3', 2000, (result3) => {
-                results.push(result3);
-            });
-            
-            // Show final result
-            showResult(results);
-            
-            // Update spin counter
-            spinCount++;
-            document.getElementById('spinCount').textContent = spinCount;
-            localStorage.setItem('wheelSpinCount', spinCount);
-            
-            // Re-enable spin button
-            spinButton.disabled = false;
-            spinButton.textContent = 'Spin the Wheel of Fate';
-        }
+        // show result
+        showResult(results);
 
-        // Display the final result
-        function showResult(results) {
-            const resultText = document.getElementById('resultText');
-            resultText.textContent = `${results[0]} in the ${results[1]} + ${results[2]}`;
-            
-            const resultContainer = document.getElementById('resultContainer');
-            resultContainer.style.display = 'block';
-        }
+        // update spin counter
+        spinCount = (parseInt(spinCount, 10) || 0) + 1;
+        document.getElementById('spinCount').textContent = spinCount;
+        localStorage.setItem('wheelSpinCount', spinCount);
 
-        // Initialize the wheels when page loads
-        window.onload = function() {
-            initializeWheels();
-            
-            // Add event listener to spin button
-            document.getElementById('spinButton').addEventListener('click', startChainSpin);
-        };
-    </script>
-</body>
-</html>
+        spinButton.disabled = false;
+        spinButton.textContent = 'Spin the Wheel of Fate';
+    }
+
+    // Display the final assembled result nicely
+    function showResult(results) {
+        const resultText = document.getElementById('resultText');
+        // Format: "Domination in the Location + Punishment"
+        const text = `${results[0]} in the ${results[1]} + ${results[2]}`;
+        resultText.textContent = text;
+
+        const rc = document.getElementById('resultContainer');
+        rc.style.display = 'block';
+    }
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+        initializeWheels();
+
+        // attach click
+        document.getElementById('spinButton').addEventListener('click', startChainSpin);
+
+        // Optional: allow clicking the small wrappers to preview/zoom them
+        document.querySelectorAll('.wheel-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('click', (e) => {
+                // If already active, deactivate; otherwise activate clicked one
+                if (wrapper.classList.contains('active')) {
+                    wrapper.classList.remove('active');
+                    document.getElementById('overlay').style.display = 'none';
+                } else {
+                    document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
+                    wrapper.classList.add('active');
+                    document.getElementById('overlay').style.display = 'block';
+                }
+            });
+        });
+
+        // clicking overlay closes active wheel
+        document.getElementById('overlay').addEventListener('click', () => {
+            document.querySelectorAll('.wheel-wrapper').forEach(w => w.classList.remove('active'));
+            document.getElementById('overlay').style.display = 'none';
+        });
+    });
+
+})(); 
+</script>
