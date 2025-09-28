@@ -79,8 +79,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 100;
-            width: 80vmin;
-            height: 80vmin;
+            width: 500px;
+            height: 500px;
         }
         
         .wheel-label {
@@ -154,16 +154,16 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
             left: -50%;
             top: 50%;
-        }
-        
-        .wheel-card.small .wheel-section-content {
-            font-size: 0.8rem;
             transform: translateY(-50%) rotate(45deg);
+            font-size: 0.9rem;
+            padding: 0 5px;
+            white-space: nowrap;
         }
         
         .wheel-card.active .wheel-section-content {
             font-size: 1.4rem;
-            transform: translateY(-50%) rotate(45deg);
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
         
         .wheel-center {
@@ -311,6 +311,11 @@
                 height: 200px;
             }
             
+            .wheel-card.active {
+                width: 400px;
+                height: 400px;
+            }
+            
             h1 {
                 font-size: 2.5rem;
             }
@@ -331,6 +336,11 @@
                 height: 240px;
             }
             
+            .wheel-card.active {
+                width: 350px;
+                height: 350px;
+            }
+            
             h1 {
                 font-size: 2rem;
             }
@@ -338,11 +348,6 @@
             .controls {
                 flex-direction: column;
                 gap: 15px;
-            }
-            
-            .wheel-card.active {
-                width: 90vmin;
-                height: 90vmin;
             }
         }
     </style>
