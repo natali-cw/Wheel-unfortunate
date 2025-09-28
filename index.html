@@ -18,6 +18,7 @@
             background: radial-gradient(circle, #1a0a0a, #0d0404);
             color: #e0d3d3;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -54,11 +55,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
             gap: 40px;
             margin-bottom: 30px;
-            position: relative;
-            height: 300px;
+            flex-wrap: wrap;
         }
         
         .wheel-card {
@@ -66,40 +65,22 @@
             flex-direction: column;
             align-items: center;
             transition: all 0.8s ease;
-            position: absolute;
+            position: relative;
         }
         
         .wheel-card.small {
-            width: 180px;
-            opacity: 0.7;
-            z-index: 1;
-        }
-        
-        .wheel-card.left {
-            left: 10%;
-            top: 0;
-        }
-        
-        .wheel-card.middle {
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        .wheel-card.right {
-            right: 10%;
-            top: 0;
+            width: 200px;
+            height: 240px;
         }
         
         .wheel-card.active {
-            width: 80vmin;
-            height: 80vmin;
             position: fixed;
-            left: 50%;
             top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
             z-index: 100;
-            opacity: 1;
+            width: 80vmin;
+            height: 80vmin;
         }
         
         .wheel-label {
@@ -160,32 +141,29 @@
             top: 0;
             right: 0;
             transform-origin: 0% 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
         }
         
         .wheel-section-content {
             position: absolute;
-            width: 100%;
+            width: 200%;
             text-align: center;
             transform-origin: center;
             color: #f0e6e6;
             font-weight: 700;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
-            padding: 0 10px;
-            transition: all 0.5s ease;
+            left: -50%;
+            top: 50%;
         }
         
         .wheel-card.small .wheel-section-content {
-            font-size: 0.7rem;
-            transform: rotate(45deg) translateY(-50px);
+            font-size: 0.8rem;
+            transform: translateY(-50%) rotate(45deg);
         }
         
         .wheel-card.active .wheel-section-content {
-            font-size: 1.3rem;
-            transform: rotate(45deg) translateY(-120px);
+            font-size: 1.4rem;
+            transform: translateY(-50%) rotate(45deg);
         }
         
         .wheel-center {
@@ -325,11 +303,12 @@
         
         @media (max-width: 900px) {
             .wheels-container {
-                height: 250px;
+                gap: 30px;
             }
             
             .wheel-card.small {
-                width: 140px;
+                width: 160px;
+                height: 200px;
             }
             
             h1 {
@@ -339,23 +318,17 @@
             .subtitle {
                 font-size: 1.1rem;
             }
-            
-            .wheel-card.left {
-                left: 5%;
-            }
-            
-            .wheel-card.right {
-                right: 5%;
-            }
         }
         
         @media (max-width: 600px) {
             .wheels-container {
-                height: 200px;
+                flex-direction: column;
+                gap: 40px;
             }
             
             .wheel-card.small {
-                width: 110px;
+                width: 200px;
+                height: 240px;
             }
             
             h1 {
@@ -384,7 +357,7 @@
         </div>
 
         <div class="wheels-container">
-            <div class="wheel-card small left" id="card1">
+            <div class="wheel-card small" id="card1">
                 <div class="wheel-label">DOMINATION</div>
                 <div class="wheel-container">
                     <div class="pointer"></div>
@@ -394,7 +367,7 @@
                 </div>
             </div>
             
-            <div class="wheel-card small middle" id="card2">
+            <div class="wheel-card small" id="card2">
                 <div class="wheel-label">LOCATION</div>
                 <div class="wheel-container">
                     <div class="pointer"></div>
@@ -404,7 +377,7 @@
                 </div>
             </div>
             
-            <div class="wheel-card small right" id="card3">
+            <div class="wheel-card small" id="card3">
                 <div class="wheel-label">PUNISHMENT</div>
                 <div class="wheel-container">
                     <div class="pointer"></div>
